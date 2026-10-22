@@ -1,163 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tactical Syndicate | Torn</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tactical Syndicate HQ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Hanken+Grotesk:wght@400;600&display=swap">
 <style>
-:root{
-  --bg:#d3d4cf; --panel:#e6e7e2; --ink:#1f2430; --muted:#566070; --line:#1f2430;
-  --red:#b82a17; --yellow:#f2b90f; --on-dark:#f2f2ee;
-  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){--bg:#171b24;--panel:#222836;--ink:#e8e9e4;--muted:#9aa3b2;--line:#e8e9e4;--red:#e2523d;}
-}
-:root[data-theme="dark"]{--bg:#171b24;--panel:#222836;--ink:#e8e9e4;--muted:#9aa3b2;--line:#e8e9e4;--red:#e2523d;}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 "IBM Plex Sans",system-ui,sans-serif}
-.wrap{max-width:880px;margin:0 auto;padding:0 20px}
-h1,h2,h3{font-family:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;font-weight:900;line-height:.95;margin:0;letter-spacing:.01em}
-a{color:inherit}
-:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
-
-/* hero: the faction name as street signage */
-.hero{padding:44px 0 36px;border-bottom:6px solid var(--line)}
-.hero .tag{font-weight:600;color:var(--muted);margin:0 0 10px}
-.hero h1{font-size:clamp(64px,19vw,164px);text-transform:uppercase;word-break:break-word}
-.hero p.lede{max-width:34em;font-size:19px;margin:18px 0 26px}
-.btns{display:flex;flex-wrap:wrap;gap:12px}
-.btn{display:inline-block;padding:13px 22px;font-weight:600;text-decoration:none;border:3px solid var(--line);border-radius:2px}
-.btn.primary{background:var(--yellow);color:#1f2430;border-color:#1f2430}
-.btn:hover{background:var(--ink);color:var(--bg)}
-.btn.primary:hover{background:#1f2430;color:var(--yellow)}
-
-section{padding:40px 0;border-bottom:2px solid var(--line)}
-h2{font-size:clamp(36px,8vw,56px);margin-bottom:18px}
-
-/* war status strip */
-.war{background:var(--red);color:var(--on-dark);border-bottom:none}
-.war .wrap{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;padding-top:18px;padding-bottom:18px}
-.war strong{font:900 30px/1 "Big Shoulders Display",sans-serif}
-.war span{opacity:.92}
-
-.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
-.grid h3{font-size:30px;margin-bottom:6px}
-.grid p{margin:0;color:var(--muted)}
-
-ol.steps{margin:0;padding:0;list-style:none;counter-reset:s}
-ol.steps li{counter-increment:s;display:grid;grid-template-columns:48px 1fr;gap:6px;padding:12px 0;border-top:1px solid var(--muted)}
-ol.steps li::before{content:counter(s);font:900 36px/1 "Big Shoulders Display",sans-serif;color:var(--red)}
-
-.rules{margin:0;padding-left:1.2em}
-.rules li{margin:8px 0;max-width:40em}
-
-.scroll{overflow-x:auto}
-table{border-collapse:collapse;width:100%;min-width:420px;background:var(--panel)}
-th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--muted)}
-th{font-family:"Big Shoulders Display",sans-serif;font-size:22px;border-bottom:3px solid var(--line)}
-
-footer{padding:28px 0 40px;color:var(--muted);font-size:15px}
-footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between}
-</style>
-</head>
-<body>
-
-<header class="hero"><div class="wrap">
-  <p class="tag" id="tag"></p>
-  <h1 id="name">Tactical Syndicate</h1>
-  <p class="lede" id="lede"></p>
-  <div class="btns">
-    <a class="btn primary" id="join" href="#join-steps">Apply to join</a>
-    <a class="btn" id="torn" href="#" target="_blank" rel="noopener">View us on Torn</a>
-  </div>
-</div></header>
-
-<div class="war"><div class="wrap">
-  <strong id="warStatus"></strong>
-  <span id="warNote"></span>
-</div></div>
-
-<main>
-<section><div class="wrap">
-  <h2>What we’re about</h2>
-  <div class="grid" id="pillars"></div>
-</div></section>
-
-<section id="join-steps"><div class="wrap">
-  <h2>How to join</h2>
-  <ol class="steps" id="steps"></ol>
-</div></section>
-
-<section><div class="wrap">
-  <h2>Faction rules</h2>
-  <ul class="rules" id="rules"></ul>
-</div></section>
-
-<section><div class="wrap">
-  <h2>Ranks</h2>
-  <div class="scroll"><table>
-    <thead><tr><th>Rank</th><th>Who</th><th>What you do</th></tr></thead>
-    <tbody id="ranks"></tbody>
-  </table></div>
-</div></section>
-</main>
-
-<footer><div class="wrap">
-  <span id="foot"></span>
-  <span>Not affiliated with Torn.</span>
-</div></footer>
-
+:root{--bg:#0b0816;--p:#140f26;--l:#2a2150;--t:#e9e6ff;--m:#8f88b8;--pk:#ff2bd6;--cy:#19f0ff;--li:#b6ff3b;--am:#ffb020;--rd:#ff4d6d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px/1.5 'Hanken Grotesk',system-ui,sans-serif}
+h1,h2,.big,th{font-family:'Chakra Petch',sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--l)}
+h1{margin:0;font-size:22px;color:var(--cy);text-shadow:0 0 14px var(--cy)}h1 small{color:var(--pk);text-shadow:0 0 10px var(--pk);font-size:14px}
+.k{display:flex;gap:8px;align-items:center}
+input,select,textarea,button{background:var(--p);color:var(--t);border:1px solid var(--l);border-radius:6px;padding:7px 10px;font:inherit}
+button{cursor:pointer;border-color:var(--pk);color:var(--pk)}button:hover,button:focus-visible{background:var(--pk);color:#0b0816;outline:none}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cy)}
+.lay{display:grid;grid-template-columns:170px 1fr}
+nav{display:flex;flex-direction:column;gap:2px;padding:14px 10px;border-right:1px solid var(--l)}
+nav button{text-align:left;border:0;border-left:3px solid transparent;border-radius:0;background:none;color:var(--m)}
+nav button.on{border-left-color:var(--cy);color:var(--cy);background:var(--p);text-shadow:0 0 8px var(--cy)}
+main{padding:20px;min-width:0}h2{margin:0 0 12px;font-size:19px;color:var(--li)}h3{margin:22px 0 8px;color:var(--cy);font-family:'Chakra Petch'}
+.w{overflow-x:auto;border:1px solid var(--l);border-radius:8px}table{width:100%;border-collapse:collapse}
+th{text-align:left;color:var(--m);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--l);white-space:nowrap}td{padding:7px 10px;border-bottom:1px solid #1d1740}
+tr:hover td{background:#1a1433}a{color:var(--cy);text-decoration:none}a:hover{text-decoration:underline}
+.d{display:inline-block;width:9px;height:9px;border-radius:50%;background:#4a4470;margin-right:7px}.d.online{background:var(--li);box-shadow:0 0 8px var(--li)}.d.idle{background:var(--am)}
+.big{font-size:clamp(44px,9vw,84px);color:var(--pk);text-shadow:0 0 24px var(--pk);line-height:1}.big.dead{color:var(--m);text-shadow:none}
+.tiles{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px}.tile{flex:1 1 130px;border-left:3px solid var(--cy);padding:4px 12px}.tile b{display:block;font:700 26px 'Chakra Petch';color:var(--cy)}.tile span{color:var(--m)}
+.mut{color:var(--m)}.err{color:var(--rd);border:1px solid var(--rd);padding:10px;border-radius:6px}.bad{color:var(--rd)}.ok{color:var(--li)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}.bar{height:10px;background:var(--l);border-radius:5px;overflow:hidden;display:flex}.bar i{display:block;height:100%}
+.fs{display:flex;justify-content:space-between;font:700 20px 'Chakra Petch';margin:4px 0}.news{max-height:300px;overflow:auto;border:1px solid var(--l);border-radius:8px;padding:6px 12px}.news p{margin:6px 0}
+@media(max-width:720px){.lay{grid-template-columns:1fr}nav{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--l)}nav button{border-left:0;border-bottom:3px solid transparent;white-space:nowrap}nav button.on{border-bottom-color:var(--cy)}}
+@media(prefers-reduced-motion:no-preference){.big:not(.dead){animation:p 2s ease-in-out infinite}@keyframes p{50%{text-shadow:0 0 36px var(--pk)}}}
+</style></head><body>
+<header><h1>Tactical Syndicate <small>[55410]</small></h1>
+<div class="k"><input id="k" type="password" placeholder="Torn API key" aria-label="Torn API key"><button onclick="setKey()">Connect</button><button onclick="forget()">Forget key</button><span class="mut" id="st"></span></div></header>
+<div class="lay"><nav id="nav"></nav><main id="v"></main></div>
 <script>
-// ✏️ EDIT THIS BLOCK. Everything on the page comes from here.
-const F = {
-  name: "Tactical Syndicate",
-  tag: "A Torn City faction",
-  id: "56410",
-  lede: "Active members, steady chains, and a leadership team that answers messages. Tell us what you’re working on and we’ll find you a place.",
-  war: { status: "No active war", note: "Next ranked war details will be posted here." },
-  discord: "", // paste your Discord invite link
-  pillars: [
-    ["Chaining", "We run chains around the clock. Hit when called and keep the timer alive."],
-    ["Wars", "Ranked and territory wars with clear targets and calm call-outs."],
-    ["Support", "Energy refills, armory loans and advice for new players."]
-  ],
-  steps: [
-    "Make sure you’ve been in Torn for at least a week and check in daily.",
-    "Open our faction page on Torn and press the join request.",
-    "Message the leaders with your level and what you like doing.",
-    "Join the Discord and say hello. You’ll get your rank there."
-  ],
-  rules: [
-    "Stay active. Tell leadership if you’ll be away for more than a few days.",
-    "Respond to war and chain calls when you can.",
-    "Be decent to everyone, in game and in chat.",
-    "Don’t attack faction members or allies."
-  ],
-  ranks: [
-    ["Leader", "Your name", "Final call on wars and recruitment"],
-    ["Co-leader", "Your name", "Runs chains, handles applications"],
-    ["Member", "Everyone else", "Hit, chain, help each other"]
-  ]
-};
+const F=55410,$=s=>document.querySelector(s),LS=localStorage,now=()=>Date.now()/1000|0;
+let key=LS.k||'',D={},tab=LS.tab||'Overview';
+const e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=n=>Number(n||0).toLocaleString(),ago=s=>{s=Math.max(0,s);return s<3600?(s/60|0)+'m':s<86400?(s/3600|0)+'h':(s/86400|0)+'d'};
+const api=async(sel)=>{const r=await(await fetch(`https://api.torn.com/faction/${F}?selections=${sel}&key=${key}`)).json();if(r.error)throw r.error;return r};
+const tbl=(h,r)=>`<div class=w><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${r.map(c=>`<tr>${c.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+const mem=()=>Object.entries(D.core?.members||{}).map(([id,m])=>({id,...m}));
+const dot=m=>`<i class="d ${(m.last_action?.status||'').toLowerCase()}"></i>`;
+const link=m=>`<a href="https://www.torn.com/profiles.php?XID=${m.id}" target="_blank" rel="noopener">${e(m.name)}</a>`;
+const need=(n,l)=>D[n]?'':`<p class=err>${l} unavailable: ${e(D['e_'+n])}. Your key may not have faction permission for this data.</p>`;
+const strip=h=>e(String(h).replace(/<[^>]+>/g,''));
+function csv(name,rows){const s=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/csv'}));a.download=name;a.click()}
+const J=(k,d)=>{try{return JSON.parse(LS[k]||d)}catch{return JSON.parse(d)}},S_=(k,v)=>LS[k]=JSON.stringify(v);
 
-const $ = id => document.getElementById(id);
-document.title = F.name + " | Torn";
-$("name").textContent = F.name;
-$("tag").textContent = F.tag;
-$("lede").textContent = F.lede;
-$("torn").href = "https://www.torn.com/factions.php?step=profile&ID=" + encodeURIComponent(F.id);
-$("warStatus").textContent = F.war.status;
-$("warNote").textContent = F.war.note;
-if (F.discord) { $("join").href = F.discord; $("join").target = "_blank"; $("join").rel = "noopener"; $("join").textContent = "Join our Discord"; }
-$("foot").textContent = F.name + " · Torn City";
-F.pillars.forEach(([t, d]) => { const x = document.createElement("div"); x.innerHTML = "<h3></h3><p></p>"; x.children[0].textContent = t; x.children[1].textContent = d; $("pillars").append(x); });
-F.steps.forEach(s => { const li = document.createElement("li"); li.textContent = s; $("steps").append(li); });
-F.rules.forEach(r => { const li = document.createElement("li"); li.textContent = r; $("rules").append(li); });
-F.ranks.forEach(r => { const tr = document.createElement("tr"); r.forEach(c => { const td = document.createElement("td"); td.textContent = c; tr.append(td); }); $("ranks").append(tr); });
-</script>
-</body>
-</html>
+async function load(){
+ if(!key)return render();$('#st').textContent='Loading…';
+ const sets={core:'basic,chain,rankedwars',att:'attacks',don:'donations',fun:'fundsnews',arm:'armorynews',oc:'crimes'};
+ await Promise.all(Object.entries(sets).map(async([n,s])=>{try{D[n]=await api(s);D['e_'+n]=null}catch(x){D[n]=null;D['e_'+n]=x.error||'Request failed'}}));
+ D.t0=now();if(D.core)snap();$('#st').textContent=D.core?'Updated '+new Date().toLocaleTimeString():'';render();
+}
+function setKey(){key=$('#k').value.trim();if(key){LS.k=key;$('#k').value='';load()}}
+function forget(){LS.removeItem('k');key='';D={};render()}
+function snap(){const S=J('sn','{}'),d=new Date(),y=d.getUTCFullYear(),j=new Date(Date.UTC(y,0,1)),w=Math.ceil(((d-j)/864e5+j.getUTCDay()+1)/7),k=y+'-W'+String(w).padStart(2,'0');
+ S[k]={};mem().forEach(m=>S[k][m.id]={n:m.name,l:m.level,d:m.days_in_faction});
+ Object.keys(S).sort().slice(0,-12).forEach(x=>delete S[x]);S_('sn',S)}
+
+const hits=()=>{const w=LS.win||'604800',lim=w=='all'?0:now()-w,o={};
+ Object.values(D.att?.attacks||{}).filter(a=>String(a.attacker_faction)==F&&a.timestamp_started>=lim).forEach(a=>{const k=a.attacker_name||a.attacker_id;o[k]=o[k]||{n:k,h:0,r:0};o[k].h++;o[k].r+=+(a.respect_gain||a.respect||0)});
+ return Object.values(o).sort((a,b)=>b.r-a.r)};
+const winSel=()=>`<select onchange="LS.win=this.value;render()" aria-label="Time window">${[['86400','Last 24h'],['604800','Last 7 days'],['all','All loaded']].map(([v,l])=>`<option value=${v} ${(LS.win||'604800')==v?'selected':''}>${l}</option>`).join('')}</select>`;
+
+const T={
+Overview(){const m=mem(),on=m.filter(x=>x.last_action?.status=='Online').length,th=+(LS.th||3),ina=m.filter(x=>now()-x.last_action.timestamp>th*86400).length,c=D.core.chain||{},av=m.length?Math.round(m.reduce((a,x)=>a+x.level,0)/m.length):0;
+ return`<h2>Overview</h2><div class=tiles>${[[m.length,'Members'],[on,'Online now'],[ina,`Inactive ${th}d+`],[av,'Average level'],[(c.current||0)+'/'+(c.max||0),'Chain']].map(([a,b])=>`<div class=tile><b>${a}</b><span>${b}</span></div>`).join('')}</div>
+ <h3>Top hitters</h3>${winSel()}${tbl(['Member','Hits','Respect'],hits().slice(0,5).map(x=>[e(x.n),x.h,x.r.toFixed(2)]))}`},
+Roster(){const m=mem().sort((a,b)=>b.level-a.level);
+ return`<h2>Roster</h2><div class=row><input placeholder="Search members" oninput="const q=this.value.toLowerCase();document.querySelectorAll('#rt tbody tr').forEach(r=>r.hidden=!r.textContent.toLowerCase().includes(q))"><button onclick="csv('roster.csv',[['Name','Level','Position','Days','Last action'],...mem().map(x=>[x.name,x.level,x.position,x.days_in_faction,x.last_action.relative])])">Export CSV</button></div>
+ <div id=rt>${tbl(['Member','Level','Position','Days','Status','Last action'],m.map(x=>[dot(x)+link(x),x.level,e(x.position),x.days_in_faction,e(x.status?.description),e(x.last_action?.relative)]))}</div>`},
+Activity(){const th=+(LS.th||3),m=mem().sort((a,b)=>a.last_action.timestamp-b.last_action.timestamp),bad=m.filter(x=>now()-x.last_action.timestamp>th*86400);
+ return`<h2>Activity</h2><div class=row>Flag members inactive for <input type=number min=1 value=${th} style="width:70px" onchange="LS.th=this.value;render()"> days <span class=bad>${bad.length} flagged</span></div>
+ ${tbl(['Member','Last active','Inactive for','Flag'],m.map(x=>{const s=now()-x.last_action.timestamp;return[dot(x)+link(x),e(x.last_action.relative),ago(s),s>th*86400?'<span class=bad>Inactive</span>':'<span class=ok>Active</span>']}))}`},
+War(){const c=D.core.chain||{},live=c.current>0,ws=Object.values(D.core.rankedwars||{}).sort((a,b)=>b.war.start-a.war.start),w=ws.find(x=>!x.war.end)||ws[0];
+ let rw='<p class=mut>No ranked war found.</p>';
+ if(w){const f=Object.entries(w.factions),t=f.reduce((a,[,x])=>a+x.score,0)||1,cl=['var(--cy)','var(--pk)'];
+  rw=f.map(([id,x],i)=>`<div class=fs><span style="color:${cl[i%2]}">${e(x.name)}</span><span>${num(x.score)}</span></div>`).join('')+`<div class=bar>${f.map(([,x],i)=>`<i style="width:${x.score/t*100}%;background:${cl[i%2]}"></i>`).join('')}</div><p class=mut>${w.war.end?'Ended':'Active'} · target ${num(w.war.target)} · lead ${num(Math.abs((f[0]?.[1].score||0)-(f[1]?.[1].score||0)))}</p>`}
+ return`<h2>War room</h2><div class="big ${live?'':'dead'}" id=ct>${live?'--:--':'No chain'}</div><p class=mut>Chain ${c.current||0}/${c.max||0} · modifier ${c.modifier||1} · cooldown ${c.cooldown||0}</p>
+ <h3>Ranked war</h3>${rw}<h3>Hits and respect</h3>${winSel()} <span class=mut>(Torn returns the latest 100 attacks)</span>${need('att','Attacks')}${tbl(['Member','Hits','Respect'],hits().map(x=>[e(x.n),x.h,x.r.toFixed(2)]))}`},
+Finances(){const pool=+(LS.pool||0),keep=+(LS.keep||10),H=hits(),basis=LS.basis||'respect',tot=H.reduce((a,x)=>a+(basis=='respect'?x.r:1),0)||1,net=pool*(1-keep/100),d=Object.values(D.don?.donations||{}).sort((a,b)=>b.money_balance-a.money_balance);
+ return`<h2>Finances</h2>${need('don','Vault balances')}${tbl(['Member','Money balance','Points'],d.map(x=>[e(x.name),'$'+num(x.money_balance),num(x.points_balance)]))}
+ <h3>Vault log</h3>${need('fun','Funds log')}<div class=news>${Object.values(D.fun?.fundsnews||{}).sort((a,b)=>b.timestamp-a.timestamp).slice(0,40).map(n=>`<p><span class=mut>${new Date(n.timestamp*1000).toLocaleString()}</span> ${strip(n.news)}</p>`).join('')}</div>
+ <h3>Payout calculator</h3><div class=row>Pool $<input type=number value=${pool} onchange="LS.pool=this.value;render()"> Faction keeps <input type=number value=${keep} style="width:70px" onchange="LS.keep=this.value;render()">% Split by <select onchange="LS.basis=this.value;render()"><option value=respect ${basis=='respect'?'selected':''}>Respect</option><option value=hits ${basis!='respect'?'selected':''}>Equal share</option></select> ${winSel()}</div>
+ ${tbl(['Member','Share','Payout'],H.map(x=>{const s=(basis=='respect'?x.r:1)/tot;return[e(x.n),(s*100).toFixed(1)+'%','$'+num(Math.floor(net*s))]}))}
+ <p><button onclick="csv('payout.csv',[['Member','Payout'],...hits().map(x=>[x.n,Math.floor(${net}*((LS.basis||'respect')=='respect'?x.r:1)/${tot})])])">Export payout CSV</button></p>
+ <h3>Armory log</h3>${need('arm','Armory log')}<div class=news>${Object.values(D.arm?.armorynews||{}).sort((a,b)=>b.timestamp-a.timestamp).slice(0,40).map(n=>`<p><span class=mut>${new Date(n.timestamp*1000).toLocaleString()}</span> ${strip(n.news)}</p>`).join('')}</div>`},
+Trade(){const a=J('tr','[]'),sum=t=>a.filter(x=>x.ty==t).reduce((s,x)=>s+x.q*x.p,0),pr=sum('Sell')-sum('Buy');
+ return`<h2>Trade ledger</h2><p class=mut>Faction trades are saved in this browser only. Export CSV to share.</p>
+ <div class=row><select id=tt><option>Buy</option><option>Sell</option></select><input id=ti placeholder="Item"><input id=tq type=number placeholder="Qty" style="width:80px"><input id=tp type=number placeholder="Price each" style="width:120px"><input id=tw placeholder="Member"><button onclick="addTr()">Add trade</button></div>
+ <div class=tiles><div class=tile><b>$${num(sum('Buy'))}</b><span>Bought</span></div><div class=tile><b>$${num(sum('Sell'))}</b><span>Sold</span></div><div class=tile><b class="${pr<0?'bad':'ok'}">$${num(pr)}</b><span>Net</span></div></div>
+ ${tbl(['Date','Type','Item','Qty','Each','Member',''],a.map((x,i)=>[x.d,x.ty,e(x.i),x.q,'$'+num(x.p),e(x.w),`<button onclick="delTr(${i})">Delete</button>`]))}
+ <p><button onclick="csv('trades.csv',[['Date','Type','Item','Qty','Price','Member'],...J('tr','[]').map(x=>[x.d,x.ty,x.i,x.q,x.p,x.w])])">Export CSV</button></p>`},
+Crimes(){const c=Object.values(D.oc?.crimes||{}).sort((a,b)=>b.time_ready-a.time_ready).slice(0,25);
+ return`<h2>Organized crimes</h2>${need('oc','Crimes')}${tbl(['Crime','Participants','Ready','State'],c.map(x=>[e(x.crime_name),Array.isArray(x.participants)?x.participants.length:Object.keys(x.participants||{}).length,new Date(x.time_ready*1000).toLocaleString(),x.time_completed?(x.success?'<span class=ok>Success</span>':'<span class=bad>Failed</span>'):x.time_ready<now()?'<span class=ok>Ready</span>':'Planning']))}`},
+Stats(){const S=J('sn','{}'),ks=Object.keys(S).sort(),cur=ks.at(-1),prev=ks.at(-2);
+ const rows=prev?Object.entries(S[cur]).map(([id,x])=>[e(x.n),x.l,x.l-(S[prev][id]?.l??x.l)]).sort((a,b)=>b[2]-a[2]).map(r=>[r[0],r[1],r[2]>0?`<span class=ok>+${r[2]}</span>`:r[2]]):[];
+ return`<h2>Weekly stats</h2><p class=mut>A roster snapshot is saved each week you open this page. Saved weeks: ${ks.join(', ')||'none'}.</p>${prev?`<h3>Level gains: ${prev} to ${cur}</h3>${tbl(['Member','Level','Gain'],rows)}`:'<p>Comparison starts once two weeks are saved.</p>'}
+ <p><button onclick="csv('weekly-snapshots.csv',[['Week','Member','Level','Days'],...Object.entries(J('sn','{}')).flatMap(([w,m])=>Object.values(m).map(x=>[w,x.n,x.l,x.d]))])">Export all weeks</button></p>`},
+Notes(){const a=J('nt','[]');
+ return`<h2>Announcements</h2><p class=mut>Notes are saved in this browser only. Copy them to Discord or the faction page to share.</p><div class=row><textarea id=nt rows=3 style="flex:1;min-width:240px" placeholder="Write an announcement"></textarea><button onclick="addNt()">Post</button></div>
+ ${a.map((x,i)=>`<div class=news style="margin-bottom:8px"><span class=mut>${x.d}</span><p>${e(x.t)}</p><button onclick="delNt(${i})">Delete</button></div>`).join('')||'<p class=mut>No announcements yet.</p>'}`}
+};
+function addTr(){const g=i=>$('#'+i).value;if(!g('ti')||!+g('tp'))return;const a=J('tr','[]');a.unshift({d:new Date().toISOString().slice(0,10),ty:g('tt'),i:g('ti'),q:+g('tq')||1,p:+g('tp'),w:g('tw')});S_('tr',a);render()}
+function delTr(i){const a=J('tr','[]');a.splice(i,1);S_('tr',a);render()}
+function addNt(){const t=$('#nt').value.trim();if(!t)return;const a=J('nt','[]');a.unshift({d:new Date().toLocaleDateString(),t});S_('nt',a);render()}
+function delNt(i){const a=J('nt','[]');a.splice(i,1);S_('nt',a);render()}
+function render(){
+ document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.textContent==tab));
+ const needData=!['Trade','Notes'].includes(tab);
+ $('#v').innerHTML=!key&&needData?'<p class=err>Add your Torn API key above to load faction data. Trade and Notes work without one.</p>':needData&&D.e_core?`<p class=err>${e(D.e_core)}</p>`:needData&&!D.core?'<p class=mut>Loading…</p>':T[tab]();
+}
+$('#nav').innerHTML=Object.keys(T).map(t=>`<button>${t}</button>`).join('');
+$('#nav').onclick=ev=>{if(ev.target.tagName=='BUTTON'){tab=LS.tab=ev.target.textContent;render()}};
+setInterval(()=>{const c=D.core?.chain,el=$('#ct');if(el&&c&&c.current>0){const s=Math.max(0,c.timeout-(now()-D.t0));el.textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0');el.classList.toggle('dead',s==0)}},1000);
+render();load();
+</script></body></html>
