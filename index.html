@@ -61,7 +61,7 @@ function snap(){const S=J('sn','{}'),d=new Date(),y=d.getUTCFullYear(),j=new Dat
  Object.keys(S).sort().slice(0,-12).forEach(x=>delete S[x]);S_('sn',S)}
 
 const hits=()=>{const w=LS.win||'604800',lim=w=='all'?0:now()-w,o={};
- Object.values(D.att?.attacks||{}).filter(a=>String(a.attacker_faction)==F&&a.timestamp_started>=lim).forEach(a=>{const k=a.attacker_name||a.attacker_id;o[k]=o[k]||{n:k,h:0,r:0};o[k].h++;o[k].r+=+(a.respect_gain||a.respect||0)});
+ Object.values(D.att?.attacks||{}).filter(a=>String(a.attacker_faction)==F&&a.timestamp_started>=lim).forEach(a=>{const k=a.attacker_name||a.attacker_id;o[k]=o[k]||{n:k,id:a.attacker_id,h:0,r:0};o[k].h++;o[k].r+=+(a.respect_gain||a.respect||0)});
  return Object.values(o).sort((a,b)=>b.r-a.r)};
 const winSel=()=>`<select onchange="LS.win=this.value;render()" aria-label="Time window">${[['86400','Last 24h'],['604800','Last 7 days'],['all','All loaded']].map(([v,l])=>`<option value=${v} ${(LS.win||'604800')==v?'selected':''}>${l}</option>`).join('')}</select>`;
 
@@ -84,10 +84,20 @@ War(){const c=D.core.chain||{},live=c.current>0,ws=Object.values(D.core.rankedwa
 Finances(){const pool=+(LS.pool||0),keep=+(LS.keep||10),H=hits(),basis=LS.basis||'respect',tot=H.reduce((a,x)=>a+(basis=='respect'?x.r:1),0)||1,net=pool*(1-keep/100),d=Object.values(D.don?.donations||{}).sort((a,b)=>b.money_balance-a.money_balance);
  return`<h2>Finances</h2>${need('don','Vault balances')}${tbl(['Member','Money balance','Points'],d.map(x=>[e(x.name),'$'+num(x.money_balance),num(x.points_balance)]))}
  <h3>Vault log</h3>${need('fun','Funds log')}<div class=news>${Object.values(D.fun?.fundsnews||{}).sort((a,b)=>b.timestamp-a.timestamp).slice(0,40).map(n=>`<p><span class=mut>${new Date(n.timestamp*1000).toLocaleString()}</span> ${strip(n.news)}</p>`).join('')}</div>
- <h3>Payout calculator</h3><div class=row>Pool $<input type=number value=${pool} onchange="LS.pool=this.value;render()"> Faction keeps <input type=number value=${keep} style="width:70px" onchange="LS.keep=this.value;render()">% Split by <select onchange="LS.basis=this.value;render()"><option value=respect ${basis=='respect'?'selected':''}>Respect</option><option value=hits ${basis!='respect'?'selected':''}>Equal share</option></select> ${winSel()}</div>
- ${tbl(['Member','Share','Payout'],H.map(x=>{const s=(basis=='respect'?x.r:1)/tot;return[e(x.n),(s*100).toFixed(1)+'%','$'+num(Math.floor(net*s))]}))}
- <p><button onclick="csv('payout.csv',[['Member','Payout'],...hits().map(x=>[x.n,Math.floor(${net}*((LS.basis||'respect')=='respect'?x.r:1)/${tot})])])">Export payout CSV</button></p>
  <h3>Armory log</h3>${need('arm','Armory log')}<div class=news>${Object.values(D.arm?.armorynews||{}).sort((a,b)=>b.timestamp-a.timestamp).slice(0,40).map(n=>`<p><span class=mut>${new Date(n.timestamp*1000).toLocaleString()}</span> ${strip(n.news)}</p>`).join('')}</div>`},
+Payouts(){const p=PO(),H=payHits().filter(x=>x.h>=p.min),b=p.basis,w=x=>b=='respect'?x.r:b=='hits'?x.h:1,tot=H.reduce((a,x)=>a+w(x),0)||1,net=p.pool*(1-p.cut/100),R=+p.round||1,rows=H.map(x=>({n:x.n,id:x.id,h:x.h,r:x.r,s:w(x)/tot,amt:Math.floor(net*w(x)/tot/R)*R})),given=rows.reduce((a,x)=>a+x.amt,0),B=J('pb','[]'),ws=Object.entries(D.core.rankedwars||{}).sort((a,b)=>b[1].war.start-a[1].war.start);
+ D.pr=rows.filter(x=>x.amt>0);
+ if(LS.src&&D.wr?.id!=LS.src&&!D.wrTry){D.wrTry=1;setTimeout(()=>loadWar(LS.src),0)}
+ const inp=(k,t,ex='')=>`<input type=${t} value="${e(p[k])}" ${ex} onchange="setPo('${k}',${t=='number'?'+':''}this.value)">`;
+ const sel=(k,o)=>`<select onchange="setPo('${k}',this.value)">${o.map(([v,l])=>`<option value="${v}" ${p[k]==v?'selected':''}>${l}</option>`).join('')}</select>`;
+ return`<h2>War payouts</h2><div class=row>Source <select onchange="loadWar(this.value)"><option value="">Recent attacks</option>${ws.map(([id,x])=>`<option value=${id} ${LS.src==id?'selected':''}>War ${new Date(x.war.start*1000).toLocaleDateString()} vs ${e(Object.entries(x.factions).filter(([i])=>i!=F).map(([,f])=>f.name)[0]||'?')}</option>`).join('')}</select>${LS.src?'':winSel()}</div>
+ <div class=row>Label ${inp('label','text','placeholder="War name"')} Pool $${inp('pool','number')} Faction cut % ${inp('cut','number','style="width:70px"')} Min hits ${inp('min','number','style="width:70px"')} Split by ${sel('basis',[['respect','Respect'],['hits','Hits'],['equal','Equal']])} Round to ${sel('round',[['1','$1'],['1000','$1k'],['10000','$10k'],['100000','$100k']])}</div>
+ <div class=tiles>${[['$'+num(p.pool),'Pool'],['$'+num(p.pool*p.cut/100),'Faction cut'],['$'+num(given),'To members'],['$'+num(Math.max(0,net-given)),'Left over (stays in vault)']].map(([a,l])=>`<div class=tile><b>${a}</b><span>${l}</span></div>`).join('')}</div>
+ ${tbl(['Member','Hits','Respect','Share','Payout'],rows.map(x=>[e(x.n),x.h,(+x.r).toFixed(2),(x.s*100).toFixed(1)+'%','$'+num(x.amt)]))}
+ <p><button onclick="saveBatch()">Save as payout batch</button></p>
+ <h2>Payment tracker</h2><div class=row><button onclick="expPb()">Export batches (JSON)</button><label class=mut>Import <input type=file accept=.json onchange="impPb(this.files[0])"></label></div>
+ <p class=mut>Torn's API can't send money. Open a member's name to reach their profile and send cash (or pay from the faction vault), then tick Paid. Batches are saved in this browser; export and import to sync between leaders.</p>
+ ${B.map((bt,i)=>{const tt=bt.rows.reduce((a,r)=>a+r.amt,0),pd=bt.rows.filter(r=>r.p).reduce((a,r)=>a+r.amt,0);return`<h3>${e(bt.label||'War payout')} <span class=mut>${bt.d}</span></h3><div class=row><span class=ok>Paid $${num(pd)}</span><span class=bad>Owed $${num(tt-pd)}</span><button onclick="allPaid(${i})">Mark all paid</button><button onclick="csv('payout-${bt.d}.csv',[['Member','Amount','Paid on'],...J('pb','[]')[${i}].rows.map(r=>[r.n,r.amt,r.p])])">Export CSV</button><button onclick="delPb(${i})">Delete batch</button></div>${tbl(['Member','Amount','Copy','Paid','Paid on'],bt.rows.map((r,j)=>[r.id?`<a href="https://www.torn.com/profiles.php?XID=${r.id}" target="_blank" rel="noopener">${e(r.n)}</a>`:e(r.n),'$'+num(r.amt),`<button onclick="cp(${r.amt})">Copy</button>`,`<input type=checkbox ${r.p?'checked':''} aria-label="Paid" onchange="tgl(${i},${j})">`,r.p||'']))}`}).join('')}`},
 Trade(){const a=J('tr','[]'),sum=t=>a.filter(x=>x.ty==t).reduce((s,x)=>s+x.q*x.p,0),pr=sum('Sell')-sum('Buy');
  return`<h2>Trade ledger</h2><p class=mut>Faction trades are saved in this browser only. Export CSV to share.</p>
  <div class=row><select id=tt><option>Buy</option><option>Sell</option></select><input id=ti placeholder="Item"><input id=tq type=number placeholder="Qty" style="width:80px"><input id=tp type=number placeholder="Price each" style="width:120px"><input id=tw placeholder="Member"><button onclick="addTr()">Add trade</button></div>
@@ -104,6 +114,19 @@ Notes(){const a=J('nt','[]');
  return`<h2>Announcements</h2><p class=mut>Notes are saved in this browser only. Copy them to Discord or the faction page to share.</p><div class=row><textarea id=nt rows=3 style="flex:1;min-width:240px" placeholder="Write an announcement"></textarea><button onclick="addNt()">Post</button></div>
  ${a.map((x,i)=>`<div class=news style="margin-bottom:8px"><span class=mut>${x.d}</span><p>${e(x.t)}</p><button onclick="delNt(${i})">Delete</button></div>`).join('')||'<p class=mut>No announcements yet.</p>'}`}
 };
+const PO=()=>({pool:0,cut:10,basis:'respect',min:1,round:1000,label:'',...J('po','{}')});
+function setPo(k,v){const p=PO();p[k]=v;S_('po',p);render()}
+const payHits=()=>LS.src&&D.wr?.id==LS.src?[...D.wr.m].sort((a,b)=>b.r-a.r):hits();
+async function loadWar(id){LS.src=id||'';D.wr=null;D.wrTry=0;
+ if(id){try{const r=await(await fetch(`https://api.torn.com/faction/${id}?selections=rankedwarreport&key=${key}`)).json();if(r.error)throw r.error;const f=r.rankedwarreport.factions[F]||r.rankedwarreport.factions[String(F)];D.wr={id,m:Object.entries(f.members||{}).map(([i,x])=>({id:i,n:x.name,h:x.attacks,r:x.score}))};D.wrTry=1}catch(x){LS.src='';$('#st').textContent='War report failed: '+(x.error||x.message||'error')}}
+ render()}
+function saveBatch(){if(!D.pr?.length)return;const b=J('pb','[]');b.unshift({d:new Date().toISOString().slice(0,10),label:PO().label,rows:D.pr.map(r=>({n:r.n,id:r.id,amt:r.amt,p:''}))});S_('pb',b);render()}
+function tgl(i,j){const b=J('pb','[]'),r=b[i].rows[j];r.p=r.p?'':new Date().toISOString().slice(0,10);S_('pb',b);render()}
+function allPaid(i){const b=J('pb','[]');b[i].rows.forEach(r=>r.p=r.p||new Date().toISOString().slice(0,10));S_('pb',b);render()}
+function delPb(i){if(!confirm('Delete this payout batch?'))return;const b=J('pb','[]');b.splice(i,1);S_('pb',b);render()}
+function cp(a){navigator.clipboard.writeText(String(a));$('#st').textContent='Copied '+num(a)}
+function expPb(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([LS.pb||'[]'],{type:'application/json'}));a.download='payout-batches.json';a.click()}
+function impPb(f){if(!f)return;f.text().then(t=>{try{const n=JSON.parse(t),b=J('pb','[]');S_('pb',[...n,...b.filter(x=>!n.some(y=>y.d==x.d&&y.label==x.label&&y.rows.length==x.rows.length))]);render()}catch{$('#st').textContent='Invalid batch file'}})}
 function addTr(){const g=i=>$('#'+i).value;if(!g('ti')||!+g('tp'))return;const a=J('tr','[]');a.unshift({d:new Date().toISOString().slice(0,10),ty:g('tt'),i:g('ti'),q:+g('tq')||1,p:+g('tp'),w:g('tw')});S_('tr',a);render()}
 function delTr(i){const a=J('tr','[]');a.splice(i,1);S_('tr',a);render()}
 function addNt(){const t=$('#nt').value.trim();if(!t)return;const a=J('nt','[]');a.unshift({d:new Date().toLocaleDateString(),t});S_('nt',a);render()}
